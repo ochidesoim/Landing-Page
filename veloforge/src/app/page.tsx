@@ -136,7 +136,7 @@ export default function Home() {
           setEntered(true);
           // Step 1: fade out instruction text
           setInstructionVis(false);
-          // Phase 1 (0ms to 800ms): fire glitch on VELOFORGE
+          // Phase 1 (0ms to 1800ms): fire glitch on VELOFORGE (slower)
           const chars = "█▓▒░|/\\-_";
           const original = "VELOFORGE";
           let iterations = 0;
@@ -146,24 +146,24 @@ export default function Home() {
               if (index < iterations) return original[index];
               return chars[Math.floor(Math.random() * chars.length)];
             }).join(""));
-            iterations += 1/3;
+            iterations += 1/4;
             if (iterations > original.length) {
               clearInterval(interval);
               setGlitchText(original);
             }
-          }, 30);
+          }, 50);
 
-          // Phase 2 (800ms to 1500ms): Glitch resolved, overlay opacity still 1
+          // Phase 2 (1800ms to 2400ms): Glitch resolved, overlay opacity still 1
 
-          // Phase 3 (1500ms to 2200ms): start opacity fade
+          // Phase 3 (2400ms to 3100ms): start opacity fade
           setTimeout(() => {
             setOverlayFading(true);
-          }, 1500);
+          }, 2400);
 
-          // Phase 3 end (2200ms): completely hide from DOM
+          // Phase 3 end (3100ms): completely hide from DOM
           setTimeout(() => {
             setOverlayHidden(true);
-          }, 2200);
+          }, 3100);
         }}
         style={{
           position: "fixed", inset: 0, zIndex: 99999, background: "#0A0A0B",
@@ -180,7 +180,10 @@ export default function Home() {
             fontFamily: "'Bierika', var(--font-wordmark), sans-serif", fontWeight: 400
           }}>
             {entered ? (
-              <span style={{ color: "#FFF" }}>{glitchText}</span>
+              <>
+                <span style={{ color: "#FFFFFF" }}>{glitchText.substring(0, 4)}</span>
+                <span style={{ color: "#FF4500" }}>{glitchText.substring(4)}</span>
+              </>
             ) : (
               <>
                 <span style={{ color: "#FFFFFF" }}>VELO</span>
