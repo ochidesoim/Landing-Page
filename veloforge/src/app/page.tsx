@@ -22,7 +22,7 @@
  */
 
 import dynamic from "next/dynamic";
-import { useRef, useState, useCallback } from "react";
+import { useRef, useState, useCallback, useEffect } from "react";
 import * as THREE from "three";
 import type { ScenePhase } from "@/components/3d/HeroScene";
 import { useScrollScene } from "@/hooks/useScrollScene";
@@ -97,9 +97,17 @@ export default function Home() {
   const [terminalCount,  setTerminalCount]  = useState(0);
   const [isDone,         setIsDone]         = useState(false);
   const [entered,        setEntered]        = useState(false);
-  const [overlayVisible, setOverlayVisible] = useState(true);
+  const [overlayFading,  setOverlayFading]  = useState(false);
+  const [overlayHidden,  setOverlayHidden]  = useState(false);
   const [glitchText,     setGlitchText]     = useState("VELOFORGE");
   const [instructionVis, setInstructionVis] = useState(true);
+
+  // Manage pointer events
+  useEffect(() => {
+    if (typeof document !== "undefined") {
+      document.body.style.pointerEvents = overlayHidden ? "auto" : "none";
+    }
+  }, [overlayHidden]);
 
   // Stable setters (avoid recreating useScrollScene on every render)
   const handlePhase    = useCallback((p: ScenePhase) => setUiPhase(p),   []);
@@ -122,43 +130,51 @@ export default function Home() {
       <AerospaceCursor />
 
       {/* ── Entry Overlay ── */}
-      {overlayVisible && (
-        <div 
-          onClick={() => {
-            if (entered) return;
-            setEntered(true);
-            // Step 1: fade out instruction text
-            setInstructionVis(false);
-            // Step 2: after 0.2s, fire glitch on VELOFORGE
-            setTimeout(() => {
-              const chars = "█▓▒░|/\\-_";
-              const original = "VELOFORGE";
-              let iterations = 0;
-              const interval = setInterval(() => {
-                setGlitchText(original.split("").map((char, index) => {
-                  if (char === " ") return " ";
-                  if (index < iterations) return original[index];
-                  return chars[Math.floor(Math.random() * chars.length)];
-                }).join(""));
-                iterations += 1/3;
-                if (iterations > original.length) {
-                  clearInterval(interval);
-                  setGlitchText(original);
-                  // Step 3: fade out entire overlay
-                  setTimeout(() => setOverlayVisible(false), 700);
-                }
-              }, 60);
-            }, 200);
-          }}
-          style={{
-            position: "fixed", inset: 0, zIndex: 99999, background: "#0A0A0B",
-            display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
-            cursor: "none", transition: "opacity 0.7s ease-in",
-            opacity: entered && glitchText === "VELOFORGE" ? 0 : 1,
-            pointerEvents: entered ? "none" : "auto"
-          }}
-        >
-          {/* Main wordmark — two-tone */}
+      <div 
+        onClick={() => {
+          if (entered) return;
+          setEntered(true);
+          // Step 1: fade out instruction text
+          setInstructionVis(false);
+          // Phase 1 (0ms to 800ms): fire glitch on VELOFORGE
+          const chars = "█▓▒░|/\\-_";
+          const original = "VELOFORGE";
+          let iterations = 0;
+          const interval = setInterval(() => {
+            setGlitchText(original.split("").map((char, index) => {
+              if (char === " ") return " ";
+              if (index < iterations) return original[index];
+              return chars[Math.floor(Math.random() * chars.length)];
+            }).join(""));
+            iterations += 1/3;
+            if (iterations > original.length) {
+              clearInterval(interval);
+              setGlitchText(original);
+            }
+          }, 30);
+
+          // Phase 2 (800ms to 1500ms): Glitch resolved, overlay opacity still 1
+
+          // Phase 3 (1500ms to 2200ms): start opacity fade
+          setTimeout(() => {
+            setOverlayFading(true);
+          }, 1500);
+
+          // Phase 3 end (2200ms): completely hide from DOM
+          setTimeout(() => {
+            setOverlayHidden(true);
+          }, 2200);
+        }}
+        style={{
+          position: "fixed", inset: 0, zIndex: 99999, background: "#0A0A0B",
+          display: overlayHidden ? "none" : "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+          cursor: "none", transition: "opacity 0.7s ease-in",
+          opacity: overlayFading ? 0 : 1,
+          isolation: "isolate",
+          pointerEvents: "auto"
+        }}
+      >
+        {/* Main wordmark — two-tone */}
           <div className="wordmark" style={{
             fontSize: "clamp(52px, 7vw, 96px)", letterSpacing: "0.05em",
             fontFamily: "'Bierika', var(--font-wordmark), sans-serif", fontWeight: 400
@@ -202,8 +218,6 @@ export default function Home() {
             </div>
           </div>
         </div>
-      )}
-
       {/* ── Fixed 3D Canvas (z:0, behind everything) ── */}
       <div id="canvas-root" aria-hidden="true"
            style={{ position: "fixed", inset: 0, zIndex: 0, pointerEvents: "none" }}>
