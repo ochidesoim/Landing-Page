@@ -232,7 +232,7 @@ export default function Home() {
           fontSize: "clamp(9px, 1vw, 12px)", color: "#FF6B00",
           letterSpacing: "0.25em", marginBottom: "12px",
         }}>
-          COMPUTATIONAL ENGINEERING, AEROSPACE
+          COMPUTATIONAL ENGINEERING
         </div>
         {/* Wordmark — two-tone */}
         <div className="wordmark" style={{
