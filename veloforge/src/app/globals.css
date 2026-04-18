@@ -1,0 +1,234 @@
+/* ── Bierika Display Font — wordmark only ──
+   Demo OTF in: /public/fonts/Bierika/Bierika.otf
+   Note: demo version has limited glyph coverage —
+   Bebas Neue (Google Fonts) fills missing characters.
+   ─────────────────────────────────────────────── */
+@font-face {
+  font-family: 'Bierika';
+  src: url('/fonts/Bierika/Bierika.woff2') format('woff2'),
+       url('/fonts/Bierika/Bierika.woff')  format('woff'),
+       url('/fonts/Bierika/Bierika.otf')   format('opentype');
+  font-weight: 400;
+  font-style:  normal;
+  font-display: block; /* Eliminates FOUC */
+}
+
+/* Fallback matched size */
+@font-face {
+  font-family: 'BierikaFallback';
+  src: local('Arial Black');
+  size-adjust: 95%;
+}
+
+/* Hide wordmark until fonts load */
+.wordmark {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.fonts-loaded .wordmark {
+  opacity: 1;
+}
+
+@import "tailwindcss";
+
+/* ============================================================
+   VeloForge Design System — CSS Custom Properties
+   ============================================================ */
+
+:root {
+  /* Color System */
+  --color-bg:        #08080A;   /* Void — part doesn't exist yet */
+  --color-primary:   #E8E8E8;   /* Machined aluminum */
+  --color-accent:    #FF6B00;   /* Forge heat · FEA stress peak */
+  --color-cyan:      #00D4FF;   /* Wireframe / computing state */
+  --color-text:      #E8E8E8;
+
+  /* Typography */
+  --font-display: var(--font-display), sans-serif;
+  --font-mono:    'IBM Plex Mono', monospace;
+
+  /* Motion — Heavy and precise. No bounce. */
+  --ease-forge: cubic-bezier(0.76, 0, 0.24, 1);
+  --duration-slow: 900ms;
+  --duration-med:  600ms;
+  --duration-fast: 300ms;
+
+  /* Z-layers */
+  --z-canvas:  0;
+  --z-overlay: 10;
+  --z-nav:     20;
+  --z-modal:   30;
+}
+
+@theme inline {
+  --color-background: var(--color-bg);
+  --color-foreground: var(--color-primary);
+  --font-mono: var(--font-mono);
+}
+
+/* ============================================================
+   Reset & Base
+   ============================================================ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+*, *::before, *::after {
+  -webkit-app-region: no-drag;
+  box-sizing: border-box;
+  scrollbar-width: none;
+}
+*::-webkit-scrollbar { 
+  display: none; 
+}
+
+html {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background: #0A0A0B;
+  padding-top: env(safe-area-inset-top);
+  cursor: none;
+  font-family: var(--font-mono);
+  scroll-behavior: auto;
+  overscroll-behavior: none;
+  height: 100%;
+  color: #E8E8E8;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: #0A0A0B;
+  min-height: 100%;
+  overflow: hidden;
+  cursor: none;
+}
+
+/* ============================================================
+   Canvas Architecture
+   Fixed canvas sits behind all content. DOM layer on top.
+   ============================================================ */
+
+#canvas-root {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: var(--z-canvas);
+  pointer-events: none;
+}
+
+#dom-root {
+  position: relative;
+  z-index: var(--z-overlay);
+  pointer-events: none; /* children opt-in with pointer-events: auto */
+}
+
+/* ============================================================
+   Typography — Engineering Drawing aesthetic
+   ============================================================ */
+
+.font-display {
+  font-family: var(--font-display);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.font-data {
+  font-family: var(--font-mono);
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ============================================================
+   Utility classes
+   ============================================================ */
+
+.text-accent  { color: var(--color-accent); }
+.text-cyan    { color: var(--color-cyan); }
+.text-primary { color: var(--color-primary); }
+
+.border-forge {
+  border: 1px solid rgba(232, 232, 232, 0.12);
+}
+
+/* Glassmorphism — used sparingly per brief */
+.glass {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 42%;
+  height: 100vh;
+  background: rgba(10, 10, 11, 0.45);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-right: 1px solid rgba(255, 107, 0, 0.20);
+  border-radius: 0;
+  z-index: 10;
+  padding-top: 15vh;
+  padding-left: clamp(2rem, 4vw, 4rem);
+  padding-right: 2rem;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Parameter readout — ticking data values */
+.param-readout {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  color: var(--color-cyan);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Heatmap gradient utility (used in post-FX phase) */
+.heatmap-gradient {
+  background: linear-gradient(
+    90deg,
+    #00D4FF 0%,
+    #00FF8C 30%,
+    #FFD600 60%,
+    #FF6B00 100%
+  );
+}
+
+/* ============================================================
+   Loading state
+   ============================================================ */
+
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--color-bg);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity var(--duration-slow) var(--ease-forge);
+}
+
+.loading-bar {
+  width: 200px;
+  height: 1px;
+  background: rgba(232, 232, 232, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.loading-bar::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background: var(--color-cyan);
+  animation: loading-fill 1.2s var(--ease-forge) forwards;
+}
+
+@keyframes loading-fill {
+  from { width: 0%; }
+  to   { width: 100%; }
+}

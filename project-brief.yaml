@@ -1,0 +1,40 @@
+# PROJECT IDENTITY
+product_name: "VeloForge"
+product_tagline: "VeloForge — Computational Engineering, Redefined"
+product_description: "End-to-end parametric generative engineering + automated FEA pipeline. Designs 2-wheeler components (brake brackets, structural parts) from parameters alone — no manual CAD. For engineers, students, and R&D teams who want structurally validated parts fast."
+product_url: ""
+product_screenshot: "" # attach STL render or FEA heatmap screenshot
+
+# THE VISUAL IDEA
+core_visual_idea: "The 3D part doesn't exist at load. As you scroll, VeloForge thinks out loud — raw parameters become wireframe, wireframe becomes solid geometry, solid gets stress-mapped in real-time heatmap, then the optimized part locks in place. You watch the machine design itself."
+
+# REFERENCES
+ref_1_url: "https://lusion.co/projects/oryzo_ai/"
+ref_1_steal: "The moment 3D geometry transitions INTO a flat functional UI element — steal that morph for the moment the optimized part 'locks' into the final spec card."
+
+ref_2_url: "https://www.awwwards.com/sites/igloo-inc"
+ref_2_steal: "Procedural geometry that builds itself on load — steal that energy for the wireframe-to-solid construction sequence in the hero."
+
+ref_3_url: "https://bruno-simon.com/"
+ref_3_steal: "Navigation IS the product experience — steal this principle: scrolling through VeloForge IS running the pipeline, not reading about it."
+
+# COLOR SYSTEM
+background: "#08080A"
+primary: "#E8E8E8"
+accent: "#FF6B00"
+text: "#E8E8E8"
+color_rationale: "BG is void — part doesn't exist yet. Primary is machined aluminum, cold and precise. Accent is forge heat + FEA stress peak — the exact color of maximum von Mises stress on a heatmap. Cyan #00D4FF lives as a secondary for wireframe/mesh state. Two colors tell the pipeline story: cyan (computing) → orange (heat/result)."
+
+# TYPOGRAPHY
+display_font: "BIERIKA — wide, geometric, stamped. Feels like a CAD tolerance callout or an engineering drawing title block. Unexpected for web, immediately industrial."
+body_font: "IBM Plex Mono — cold, data-native, reads like terminal output. Every number feels like a real parameter."
+type_behavior: "Display weight 700 on hero, bleeds to weight 300 on scroll reveal for section intros — like a tolerance loosening. Mono params tick up like live readouts."
+
+# MOTION CHARACTER
+motion_feel: "Heavy and precise — like CNC machinery. No bounce. No spring. Objects move with mass and stop with intention."
+scroll_metaphor: "Running the pipeline. Hero = part doesn't exist. Scroll = computation happening. End = optimized part saved. User IS the engineer hitting execute."
+transition_style: "Nothing fades. Everything constructs or deconstructs. Wireframe draws itself. Heatmap bleeds in channel by channel. No cuts, no fades — only builds."
+
+# WHAT TO AVOID
+avoid: "No purple. No generic SaaS blue gradients. No floating glass cards. No particle fields. No lorem ipsum placeholders — every number shown must be a real output from the pipeline."
+not_like: "Framer templates. Any dark SaaS site with bloom + floating 3D logo. Spline embed with zero narrative. Those sites show a model — VeloForge runs a simulation."
