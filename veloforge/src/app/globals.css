@@ -5,9 +5,9 @@
    ─────────────────────────────────────────────── */
 @font-face {
   font-family: 'Bierika';
-  src: url('/Landing-Page/fonts/Bierika/Bierika.woff2') format('woff2'),
-       url('/Landing-Page/fonts/Bierika/Bierika.woff')  format('woff'),
-       url('/Landing-Page/fonts/Bierika/Bierika.otf')   format('opentype');
+  src: url('/fonts/Bierika/Bierika.woff2') format('woff2'),
+       url('/fonts/Bierika/Bierika.woff')  format('woff'),
+       url('/fonts/Bierika/Bierika.otf')   format('opentype');
   font-weight: 400;
   font-style:  normal;
   font-display: block; /* Eliminates FOUC */
@@ -155,24 +155,12 @@ body {
   border: 1px solid rgba(232, 232, 232, 0.12);
 }
 
-/* Glassmorphism — used sparingly per brief */
+/* Glassmorphism — visual treatment only, layout via inline styles */
 .glass {
-  position: fixed;
-  left: 0;
-  top: 0;
-  width: 42%;
-  height: 100vh;
   background: rgba(10, 10, 11, 0.45);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-right: 1px solid rgba(255, 107, 0, 0.20);
-  border-radius: 0;
-  z-index: 10;
-  padding-top: 15vh;
-  padding-left: clamp(2rem, 4vw, 4rem);
-  padding-right: 2rem;
-  display: flex;
-  flex-direction: column;
 }
 
 /* Parameter readout — ticking data values */

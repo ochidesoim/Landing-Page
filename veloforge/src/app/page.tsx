@@ -24,10 +24,17 @@
 import dynamic from "next/dynamic";
 import { useRef, useState, useCallback, useEffect } from "react";
 import * as THREE from "three";
+import gsap from "gsap";
+import ScrollTrigger from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 import type { ScenePhase } from "@/components/3d/HeroScene";
 import { useScrollScene } from "@/hooks/useScrollScene";
-import SpecCard from "@/components/ui/SpecCard";
 import AerospaceCursor from "@/components/ui/AerospaceCursor";
+import Phase01 from "@/components/sections/Phase01";
+import Phase02 from "@/components/sections/Phase02";
+import Phase03 from "@/components/sections/Phase03";
+import Footer from "@/components/sections/Footer";
 
 
 const HeroScene = dynamic(() => import("@/components/3d/HeroScene"), { ssr: false });
@@ -92,6 +99,10 @@ export default function Home() {
   const fovTargetRef      = useRef(60);
   const scrollProgressRef = useRef(0);
 
+  // Hero pin refs
+  const heroScrollRef  = useRef<HTMLDivElement>(null);  // 500vh scroll driver
+  const heroDisplayRef = useRef<HTMLDivElement>(null);  // 100vh display to pin
+
   // React state — only updates when values actually change
   const [uiPhase,        setUiPhase]        = useState<ScenePhase>(0);
   const [terminalCount,  setTerminalCount]  = useState(0);
@@ -124,6 +135,25 @@ export default function Home() {
     setUiPhase:        handlePhase,
     setIsDone:         handleDone,
   });
+
+  // ── Hero display pin — replaces broken position:sticky (Lenis breaks CSS sticky) ──
+  // GSAP pin is synced to Lenis via ScrollTrigger.update in useScrollScene
+  useEffect(() => {
+    const scrollDriver = heroScrollRef.current;
+    const display      = heroDisplayRef.current;
+    if (!scrollDriver || !display) return;
+
+    const st = ScrollTrigger.create({
+      trigger:       scrollDriver,   // the 500vh scroll space
+      pin:           display,        // the 100vh display panel
+      pinSpacing:    false,          // scroll driver already provides 500vh space
+      start:         "top top",
+      end:           "bottom bottom",
+      anticipatePin: 1,
+    });
+
+    return () => { st.kill(); };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>
@@ -235,61 +265,60 @@ export default function Home() {
         </div>
       </div>
 
-      {/* ── Left Fixed Glass Panel ── */}
-      <div className="glass" style={{
-        position: "fixed", left: 0, top: 0, width: "42%", height: "100vh",
-        background: "rgba(10, 10, 11, 0.45)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)",
-        borderRight: "1px solid rgba(255, 107, 0, 0.20)", borderRadius: 0,
-        zIndex: 10, paddingTop: "15vh", paddingLeft: "clamp(2rem, 4vw, 4rem)", paddingRight: "2rem",
-        display: "flex", flexDirection: "column"
-      }}>
-        {/* Descriptor */}
-        <div style={{
-          fontFamily: "var(--font-display)", fontWeight: 300,
-          fontSize: "clamp(9px, 1vw, 12px)", color: "#FF6B00",
-          letterSpacing: "0.25em", marginBottom: "12px",
-        }}>
-          COMPUTATIONAL ENGINEERING
-        </div>
-        {/* Wordmark — two-tone */}
-        <div className="wordmark" style={{
-          fontFamily: "'Bierika', var(--font-wordmark), sans-serif", fontWeight: 400,
-          fontSize: "clamp(48px, 6vw, 80px)",
-          letterSpacing: "0.05em",
-          lineHeight: 1
-        }}>
-          <span style={{ color: "#FFFFFF", fontFamily: "'Bierika', var(--font-wordmark), sans-serif" }}>VELO</span>
-          <span style={{ color: "#FF4500", fontFamily: "'Bierika', var(--font-wordmark), sans-serif" }}>FORGE</span>
-        </div>
-        
-        {/* Spacer */}
-        <div style={{ height: "2rem" }} />
-
-        {/* Terminal feed — slides up as SpecCard appears */}
-        <div style={{
-          flex: 1, minHeight: 0, position: "relative", zIndex: 20,
-          transition: "transform 0.9s cubic-bezier(0.4, 0, 0.2, 1)",
-          transform: isDone ? "translateY(-40px)" : "translateY(0)",
-        }}>
-          <Terminal visibleCount={terminalCount} />
-        </div>
-      </div>
-
       {/* ── Scroll Driver — 500vh, user scrolls through this ── */}
-      <div style={{ height: "500vh", position: "relative" }}>
+      <div ref={heroScrollRef} style={{ height: "500vh", position: "relative" }}>
 
-        {/* ── Sticky Display — sticks at top during scroll ── */}
-        <div style={{
-          position: "sticky", top: 0, height: "100vh",
+        {/* ── Hero Display — pinned by GSAP (not CSS sticky, which Lenis breaks) ── */}
+        <div ref={heroDisplayRef} style={{
+          height: "100vh",
           zIndex: 10, overflow: "hidden",
           display: "flex", flexDirection: "column",
           pointerEvents: "none",
+          willChange: "transform",
         }}>
 
           {/* Main split — empty on left since panel is fixed */}
           <div className="flex-1 flex flex-col md:flex-row overflow-hidden min-h-0">
 
-            <div className="hidden md:block w-[42%] pointer-events-none" />
+            {/* ── Left Hero Panel ── */}
+            <div className="glass hidden md:flex" style={{
+              position: "relative", width: "42%", height: "100%",
+              background: "rgba(10, 10, 11, 0.45)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)",
+              borderRight: "1px solid rgba(255, 107, 0, 0.20)", borderRadius: 0,
+              zIndex: 10, paddingTop: "15vh", paddingLeft: "clamp(2rem, 4vw, 4rem)", paddingRight: "2rem",
+              flexDirection: "column", pointerEvents: "auto"
+            }}>
+              {/* Descriptor */}
+              <div style={{
+                fontFamily: "var(--font-display)", fontWeight: 300,
+                fontSize: "clamp(9px, 1vw, 12px)", color: "#FF6B00",
+                letterSpacing: "0.25em", marginBottom: "12px",
+              }}>
+                COMPUTATIONAL ENGINEERING
+              </div>
+              {/* Wordmark — two-tone */}
+              <div className="wordmark" style={{
+                fontFamily: "'Bierika', var(--font-wordmark), sans-serif", fontWeight: 400,
+                fontSize: "clamp(48px, 6vw, 80px)",
+                letterSpacing: "0.05em",
+                lineHeight: 1
+              }}>
+                <span style={{ color: "#FFFFFF", fontFamily: "'Bierika', var(--font-wordmark), sans-serif" }}>VELO</span>
+                <span style={{ color: "#FF4500", fontFamily: "'Bierika', var(--font-wordmark), sans-serif" }}>FORGE</span>
+              </div>
+              
+              {/* Spacer */}
+              <div style={{ height: "2rem" }} />
+
+              {/* Terminal feed — slides up as SpecCard appears */}
+              <div style={{
+                flex: 1, minHeight: 0, position: "relative", zIndex: 20,
+                transition: "transform 0.9s cubic-bezier(0.4, 0, 0.2, 1)",
+                transform: isDone ? "translateY(-40px)" : "translateY(0)",
+              }}>
+                <Terminal visibleCount={terminalCount} />
+              </div>
+            </div>
 
             {/* Right: transparent — 3D shows through (100% mobile, 58% desktop) */}
             <div className="relative overflow-hidden w-full md:w-[58%] h-full">
@@ -318,8 +347,12 @@ export default function Home() {
         </div>
       </div>
 
-      {/* ── Spec Card — fixed bottom, slides up at done ── */}
-      <SpecCard visible={isDone} />
+      <Phase01 />
+      <Phase02 />
+      <Phase03 />
+      <Footer />
+
+      {/* ── Spec Card removed per request ── */}
 
       <style>{`
         @keyframes fadeUp { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none} }
