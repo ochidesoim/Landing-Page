@@ -110,7 +110,7 @@ export default function Footer() {
       }}>
         <div>
           <h4 style={{ color: "#FF6B00", fontSize: "10px", letterSpacing: "0.2em", marginBottom: "20px" }}>CAPABILITIES</h4>
-          <ul style={{ listSet: "none", padding: 0, color: "rgba(232,232,232,0.4)", fontSize: "12px", lineHeight: "2" }}>
+          <ul style={{ listStyle: "none", padding: 0, color: "rgba(232,232,232,0.4)", fontSize: "12px", lineHeight: "2" }}>
             <li>Generative Topology</li>
             <li>Multi-Physics FEA</li>
             <li>Toolpath Optimization</li>
@@ -119,7 +119,7 @@ export default function Footer() {
         </div>
         <div>
           <h4 style={{ color: "#FF6B00", fontSize: "10px", letterSpacing: "0.2em", marginBottom: "20px" }}>ECOSYSTEM</h4>
-          <ul style={{ listSet: "none", padding: 0, color: "rgba(232,232,232,0.4)", fontSize: "12px", lineHeight: "2" }}>
+          <ul style={{ listStyle: "none", padding: 0, color: "rgba(232,232,232,0.4)", fontSize: "12px", lineHeight: "2" }}>
             <li>GitHub Repository</li>
             <li>Technical Docs</li>
             <li>API Reference</li>
