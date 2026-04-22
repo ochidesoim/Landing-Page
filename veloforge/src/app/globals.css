@@ -5,7 +5,7 @@
    ─────────────────────────────────────────────── */
 @font-face {
   font-family: 'Bierika';
-  src: url('/fonts/Bierika/Bierika.otf')   format('opentype');
+  src: url('public/fonts/Bierika/Bierika.otf')   format('opentype');
   font-weight: 400;
   font-style:  normal;
   font-display: block; /* Eliminates FOUC */
