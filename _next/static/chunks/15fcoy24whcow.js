@@ -1,0 +1,1 @@
+(globalThis.TURBOPACK||(globalThis.TURBOPACK=[])).push(["object"==typeof document?document.currentScript:void 0,32544,t=>{"use strict";var e=t.i(70042);t.s(["default",0,function(){return(0,e.useEffect)(()=>{"u">typeof document&&document.fonts.ready.then(()=>{document.documentElement.classList.add("fonts-loaded")})},[]),null}])}]);
